@@ -1,8 +1,8 @@
 package com.mx.tecdesoftware.knowtion.services;
 
+import com.mx.tecdesoftware.knowtion.entities.UserEntity;
 import com.mx.tecdesoftware.knowtion.models.Project;
 import com.mx.tecdesoftware.knowtion.models.Task;
-import com.mx.tecdesoftware.knowtion.models.User;
 import com.mx.tecdesoftware.knowtion.repositories.ProjectRepository;
 import com.mx.tecdesoftware.knowtion.repositories.TaskRepository;
 import com.mx.tecdesoftware.knowtion.repositories.UserRepository;
@@ -24,7 +24,7 @@ public class TaskService {
     public Task crearTarea(Task task, Long projectId, Long creadorId) {
         Project proyecto = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
-        User creador = userRepository.findById(creadorId)
+        UserEntity creador = userRepository.findById(creadorId)
                 .orElseThrow(() -> new RuntimeException("Creador no encontrado"));
 
         task.setProject(proyecto);
@@ -36,7 +36,7 @@ public class TaskService {
     public Task asignarUsuario(Long taskId, Long userId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
-        User usuario = userRepository.findById(userId)
+        UserEntity usuario = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         task.setAsignadoA(usuario);

@@ -1,5 +1,6 @@
 package com.mx.tecdesoftware.knowtion.models;
 
+import com.mx.tecdesoftware.knowtion.entities.UserEntity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,12 +31,12 @@ public class Task {
     // Relación: Creador de la tarea
     @ManyToOne
     @JoinColumn(name = "creador_id")
-    private User creador;
+    private UserEntity creador;
 
     // Relación: Usuario asignado para resolver la tarea
     @ManyToOne
     @JoinColumn(name = "asignado_a_id")
-    private User asignadoA;
+    private UserEntity asignadoA;
 
     // Relación de muchos a muchos con Etiquetas (Tags)
     @ManyToMany
@@ -63,10 +64,10 @@ public class Task {
     public void setFechaVencimiento(LocalDateTime fechaVencimiento) { this.fechaVencimiento = fechaVencimiento; }
     public Project getProject() { return project; }
     public void setProject(Project project) { this.project = project; }
-    public User getCreador() { return creador; }
-    public void setCreador(User creador) { this.creador = creador; }
-    public User getAsignadoA() { return asignadoA; }
-    public void setAsignadoA(User asignadoA) { this.asignadoA = asignadoA; }
+    public UserEntity getCreador() { return creador; }
+    public void setCreador(UserEntity creador) { this.creador = creador; }
+    public UserEntity getAsignadoA() { return asignadoA; }
+    public void setAsignadoA(UserEntity asignadoA) { this.asignadoA = asignadoA; }
     public List<Tag> getEtiquetas() { return etiquetas; }
     public void setEtiquetas(List<Tag> etiquetas) { this.etiquetas = etiquetas; }
 }

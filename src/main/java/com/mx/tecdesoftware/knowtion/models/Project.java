@@ -1,4 +1,5 @@
 package com.mx.tecdesoftware.knowtion.models;
+import com.mx.tecdesoftware.knowtion.entities.UserEntity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class Project {
     // Relación: Muchos proyectos pueden pertenecer a un usuario creador
     @ManyToOne
     @JoinColumn(name = "creador_id")
-    private User creador;
+    private UserEntity creador;
 
     // Relación: Un proyecto tiene muchos colaboradores, un colaborador tiene muchos proyectos
     @ManyToMany
@@ -34,7 +35,7 @@ public class Project {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> colaboradores;
+    private List<UserEntity> colaboradores;
 
     public Project() {
         this.fechaInicio = LocalDateTime.now();
@@ -53,8 +54,8 @@ public class Project {
     public void setFechaFin(LocalDateTime fechaFin) { this.fechaFin = fechaFin; }
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
-    public User getCreador() { return creador; }
-    public void setCreador(User creador) { this.creador = creador; }
-    public List<User> getColaboradores() { return colaboradores; }
-    public void setColaboradores(List<User> colaboradores) { this.colaboradores = colaboradores; }
+    public UserEntity getCreador() { return creador; }
+    public void setCreador(UserEntity creador) { this.creador = creador; }
+    public List<UserEntity> getColaboradores() { return colaboradores; }
+    public void setColaboradores(List<UserEntity> colaboradores) { this.colaboradores = colaboradores; }
 }

@@ -1,15 +1,12 @@
 package com.mx.tecdesoftware.knowtion.services;
 
+import com.mx.tecdesoftware.knowtion.entities.UserEntity;
 import com.mx.tecdesoftware.knowtion.models.Project;
-import com.mx.tecdesoftware.knowtion.models.Task;
-import com.mx.tecdesoftware.knowtion.models.User;
 import com.mx.tecdesoftware.knowtion.repositories.ProjectRepository;
 import com.mx.tecdesoftware.knowtion.repositories.TaskRepository;
 import com.mx.tecdesoftware.knowtion.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class ProjectService {
@@ -25,7 +22,7 @@ public class ProjectService {
     }
 
     public Project crearProyecto(Project project, Long creadorId) {
-        User creador = userRepository.findById(creadorId)
+        UserEntity creador = userRepository.findById(creadorId)
                 .orElseThrow(() -> new RuntimeException("Creador no encontrado"));
 
         project.setCreador(creador);
@@ -37,7 +34,7 @@ public class ProjectService {
     public Project agregarColaborador(Long projectId, Long userId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
-        User nuevoColaborador = userRepository.findById(userId)
+        UserEntity nuevoColaborador = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         project.getColaboradores().add(nuevoColaborador);

@@ -1,11 +1,10 @@
-package com.mx.tecdesoftware.knowtion.models;
+package com.mx.tecdesoftware.knowtion.entities;
 
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,12 +17,11 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String passwordHash;
+    private String passwordHash; // Nombre específico para la BD
 
-    private String rol; // Ej: "ADMIN", "MEMBER"
+    private String rol;
 
-    // Constructor vacío
-    public User() {}
+    public UserEntity() {}
 
     // --- Getters y Setters ---
     public Long getId() { return id; }

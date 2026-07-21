@@ -1,5 +1,6 @@
 package com.mx.tecdesoftware.knowtion.models;
 
+import com.mx.tecdesoftware.knowtion.entities.UserEntity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -19,7 +20,7 @@ public class Comment {
     // Relación: Quién escribió el comentario
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     // Relación: En qué tarea se comentó
     @ManyToOne
@@ -37,8 +38,8 @@ public class Comment {
     public void setContenido(String contenido) { this.contenido = contenido; }
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public UserEntity getUser() { return new UserEntity(); }
+    public void setUser(UserEntity user) { this.user = user; }
     public Task getTask() { return task; }
     public void setTask(Task task) { this.task = task; }
 }
