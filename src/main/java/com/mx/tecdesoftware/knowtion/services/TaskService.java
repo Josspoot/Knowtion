@@ -24,7 +24,7 @@ public class TaskService {
     public Task crearTarea(Task task, Long projectId, Long creadorId) {
         Project proyecto = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
-        UserEntity creador = userRepository.findById(creadorId)
+        UserEntity creador = userRepository.findById(Math.toIntExact(creadorId))
                 .orElseThrow(() -> new RuntimeException("Creador no encontrado"));
 
         task.setProject(proyecto);
@@ -36,7 +36,7 @@ public class TaskService {
     public Task asignarUsuario(Long taskId, Long userId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
-        UserEntity usuario = userRepository.findById(userId)
+        UserEntity usuario = userRepository.findById(Math.toIntExact(userId))
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         task.setAsignadoA(usuario);

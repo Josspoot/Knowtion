@@ -30,7 +30,7 @@ public class UserService {
         return userMapper.toDomain(entityGuardada);
     }
 
-    public User actualizarPerfil(Long userId, User nuevosDatos) {
+    public User actualizarPerfil(Integer userId, User nuevosDatos) {
         UserEntity usuarioExistente = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 

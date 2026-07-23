@@ -21,7 +21,7 @@ public class ProjectService {
         this.taskRepository = taskRepository;
     }
 
-    public Project crearProyecto(Project project, Long creadorId) {
+    public Project crearProyecto(Project project, Integer creadorId) {
         UserEntity creador = userRepository.findById(creadorId)
                 .orElseThrow(() -> new RuntimeException("Creador no encontrado"));
 
@@ -31,8 +31,8 @@ public class ProjectService {
     }
 
     @Transactional
-    public Project agregarColaborador(Long projectId, Long userId) {
-        Project project = projectRepository.findById(projectId)
+    public Project agregarColaborador(Integer projectId, Integer userId) {
+        Project project = projectRepository.findById(Long.valueOf(projectId))
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
         UserEntity nuevoColaborador = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
