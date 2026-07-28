@@ -1,10 +1,8 @@
 package com.mx.tecdesoftware.knowtion.controllers;
 
 import com.mx.tecdesoftware.knowtion.domain.User;
-import com.mx.tecdesoftware.knowtion.entities.ProjectEntity;
 import com.mx.tecdesoftware.knowtion.entities.UserEntity;
 import com.mx.tecdesoftware.knowtion.mappers.UserMapper;
-import com.mx.tecdesoftware.knowtion.models.Task;
 import com.mx.tecdesoftware.knowtion.repositories.UserRepository;
 import com.mx.tecdesoftware.knowtion.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,9 +19,8 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final UserService userService; // Añadimos el servicio
+    private final UserService userService;
 
-    // Actualizamos el constructor para inyectar el UserService
     public UserController(UserRepository userRepository, UserMapper userMapper, UserService userService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
@@ -40,7 +36,6 @@ public class UserController {
                 .map(userMapper::toDomain)
                 .collect(Collectors.toList());
     }
-
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,10 +60,25 @@ public class UserController {
             )
     )
     public User crearUsuario(@RequestBody User nuevoUsuario) {
-        // Usamos el servicio que ya tiene la lógica de negocio (como asignar el rol)
         return userService.crearUsuario(nuevoUsuario);
     }
 
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Borrar un usuario",
+            description = "Elimina físicamente a un usuario de la base de datos mediante su ID"
+    )
+    public void eliminarUsuario(@PathVariable Integer id) {
+        userRepository.deleteById(id);
+    }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtener perfil de usuario", description = "Busca y retorna los detalles de un usuario en específico mediante su ID")
+    public User obtenerUsuarioPorId(@PathVariable Integer id) {
+        UserEntity entidad = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return userMapper.toDomain(entidad);
+    }
 }
