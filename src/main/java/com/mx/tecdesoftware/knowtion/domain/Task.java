@@ -2,7 +2,10 @@ package com.mx.tecdesoftware.knowtion.domain;
 
 import java.time.LocalDateTime;
 
-// Cero anotaciones de JPA
+
+
+
+
 public class Task {
 
     private Integer id;
@@ -12,7 +15,6 @@ public class Task {
     private String estado;
     private LocalDateTime fechaVencimiento;
 
-    // Usamos las clases puras de dominio
     private Project proyecto;
     private User creador;
     private User asignadoA;

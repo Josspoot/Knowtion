@@ -4,6 +4,7 @@ import com.mx.tecdesoftware.knowtion.domain.Task;
 import com.mx.tecdesoftware.knowtion.services.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -22,7 +23,26 @@ public class TaskController {
 
     @PostMapping("/proyecto/{projectId}/creador/{creadorId}")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crear una tarea", description = "Crea una nueva tarea dentro de un proyecto específico")
+    @Operation(
+            summary = "Crear una tarea",
+            description = "Crea una nueva tarea dentro de un proyecto específico",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Ejemplo de Tarea",
+                                    summary = "Ejemplo de Tarea",
+                                    description = "Ejemplo de Tarea",
+                                    value = "{\n" +
+                                            "  \"titulo\": \"Configurar base de datos de producción\",\n" +
+                                            "  \"descripcion\": \"Crear las tablas necesarias y configurar las credenciales de seguridad antes del despliegue.\",\n" +
+                                            "  \"prioridad\": \"ALTA\",\n" +
+                                            "  \"fechaVencimiento\": \"2026-08-15T10:00:00\"\n" +
+                                            "}"
+                            )
+                    )
+            )
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Tarea creada exitosamente"),
             @ApiResponse(responseCode = "400", description = "Bad Request: Datos inválidos", content = @Content),

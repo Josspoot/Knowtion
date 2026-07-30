@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class TagController {
 
     private final TagRepository tagRepository;
-    private final TagMapper tagMapper; // Inyectamos el mapper
+    private final TagMapper tagMapper;
 
     public TagController(TagRepository tagRepository, TagMapper tagMapper) {
         this.tagRepository = tagRepository;
@@ -51,7 +51,6 @@ public class TagController {
     })
     public Tag crearEtiqueta(@Valid @RequestBody Tag nuevaEtiqueta) {
 
-        // --- VALIDACIÓN DE NEGOCIO: Evitar etiquetas duplicadas ---
         if (tagRepository.existsByNombre(nuevaEtiqueta.getNombre())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
@@ -59,11 +58,27 @@ public class TagController {
             );
         }
 
-        // Convertimos a entidad para guardar
         TagEntity entidad = tagMapper.toEntity(nuevaEtiqueta);
         TagEntity entidadGuardada = tagRepository.save(entidad);
 
-        // Devolvemos como dominio
         return tagMapper.toDomain(entidadGuardada);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Eliminar una etiqueta", description = "Borra una etiqueta específica por su ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Etiqueta eliminada exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Not Found: La etiqueta no existe", content = @Content)
+    })
+    public void eliminarEtiqueta(@PathVariable Integer id) {
+
+        // 1. Verificamos si existe; si no, lanzamos el 404
+        if (!tagRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Etiqueta no encontrada con el ID: " + id);
+        }
+
+        // 2. Si existe, procedemos a borrarla
+        tagRepository.deleteById(id);
     }
 }

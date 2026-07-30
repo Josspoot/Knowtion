@@ -76,7 +76,7 @@ public class TaskService {
         TaskEntity taskEntity = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Tarea no encontrada con ID: " + taskId));
 
-        // VALIDACIÓN 3: Evitar modificar tareas completadas
+
         if ("COMPLETADA".equalsIgnoreCase(taskEntity.getEstado())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
