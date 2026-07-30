@@ -1,10 +1,10 @@
 package com.mx.tecdesoftware.knowtion.repositories;
 
-import com.mx.tecdesoftware.knowtion.models.Tag;
+import com.mx.tecdesoftware.knowtion.entities.TagEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TagRepository extends JpaRepository<Tag, Long> {
-
+public interface TagRepository extends JpaRepository<TagEntity, Integer> {
+    boolean existsByNombre(String nombre);
 }

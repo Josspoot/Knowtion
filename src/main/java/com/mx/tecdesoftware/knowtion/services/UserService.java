@@ -4,39 +4,59 @@ import com.mx.tecdesoftware.knowtion.domain.User;
 import com.mx.tecdesoftware.knowtion.entities.UserEntity;
 import com.mx.tecdesoftware.knowtion.mappers.UserMapper;
 import com.mx.tecdesoftware.knowtion.repositories.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper; // Inyectamos MapStruct
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    // Inyectamos el repositorio, el mapper y nuestro nuevo motor de encriptación
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public User crearUsuario(User userDomain) {
-        userDomain.setRol("MEMBER");
+    public User crearUsuario(User nuevoUsuario) {
+        // 1. Validamos si el correo ya existe
+        boolean existeCorreo = userRepository.existsByEmail(nuevoUsuario.getEmail());
 
-        // 1. Convertimos el Dominio (Negocio) a Entidad (Base de Datos)
-        UserEntity entity = userMapper.toEntity(userDomain);
+        if (existeCorreo) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "El correo del usuario ya está registrado"
+            );
+        }
 
-        // 2. Guardamos en PostgreSQL
-        UserEntity entityGuardada = userRepository.save(entity);
+        // 2. Encriptamos la contraseña original y la reemplazamos
+        String passwordEncriptada = passwordEncoder.encode(nuevoUsuario.getPassword());
+        nuevoUsuario.setPassword(passwordEncriptada);
 
-        // 3. Convertimos la Entidad de vuelta a Dominio y la retornamos
-        return userMapper.toDomain(entityGuardada);
+        // 3. Convertimos a entidad, guardamos en BD y devolvemos como dominio puro
+        UserEntity entidad = userMapper.toEntity(nuevoUsuario);
+        UserEntity entidadGuardada = userRepository.save(entidad);
+
+        return userMapper.toDomain(entidadGuardada);
     }
 
-    public User actualizarPerfil(Integer userId, User nuevosDatos) {
-        UserEntity usuarioExistente = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public List<User> obtenerUsuarios() {
+        List<UserEntity> entidades = userRepository.findAll();
 
-        usuarioExistente.setNombre(nuevosDatos.getNombre());
-        UserEntity entityActualizada = userRepository.save(usuarioExistente);
+        return entidades.stream()
+                .map(userMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 
-        return userMapper.toDomain(entityActualizada);
+    public void eliminarUsuario(Integer id) {
+        userRepository.deleteById(id);
     }
 }

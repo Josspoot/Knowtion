@@ -9,6 +9,8 @@ import com.mx.tecdesoftware.knowtion.repositories.ProjectRepository;
 import com.mx.tecdesoftware.knowtion.repositories.TaskRepository;
 import com.mx.tecdesoftware.knowtion.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TaskService {
@@ -16,7 +18,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
-    private final TaskMapper taskMapper; // Inyectamos tu mapper
+    private final TaskMapper taskMapper;
 
     public TaskService(TaskRepository taskRepository, ProjectRepository projectRepository, UserRepository userRepository, TaskMapper taskMapper) {
         this.taskRepository = taskRepository;
@@ -27,9 +29,19 @@ public class TaskService {
 
     public Task crearTarea(Task task, Integer projectId, Integer creadorId) {
         ProjectEntity proyecto = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Proyecto no encontrado con ID: " + projectId));
+
         UserEntity creador = userRepository.findById(creadorId)
-                .orElseThrow(() -> new RuntimeException("Creador no encontrado"));
+                .orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND, "Creador no encontrado con ID: " + creadorId));
+
+        // VALIDACIÓN 1: Evitar tareas duplicadas en el mismo proyecto
+        if (taskRepository.existsByTituloAndProyecto(task.getTitulo(), proyecto)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Ya existe una tarea con el título '" + task.getTitulo() + "' en este proyecto."
+            );
+        }
+
         TaskEntity entidadNueva = taskMapper.toEntity(task);
         entidadNueva.setProyecto(proyecto);
         entidadNueva.setCreador(creador);
@@ -41,9 +53,18 @@ public class TaskService {
 
     public Task asignarUsuario(Integer taskId, Integer userId) {
         TaskEntity taskEntity = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Tarea no encontrada con ID: " + taskId));
+
+        // VALIDACIÓN 2: Evitar reasignar si ya tiene un usuario
+        if (taskEntity.getAsignadoA() != null) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Esta tarea ya fue asignada previamente al usuario con ID: " + taskEntity.getAsignadoA().getId()
+            );
+        }
+
         UserEntity usuario = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Usuario no encontrado con ID: " + userId));
 
         taskEntity.setAsignadoA(usuario);
 
@@ -53,7 +74,15 @@ public class TaskService {
 
     public Task cambiarEstado(Integer taskId, String nuevoEstado) {
         TaskEntity taskEntity = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Tarea no encontrada con ID: " + taskId));
+
+        // VALIDACIÓN 3: Evitar modificar tareas completadas
+        if ("COMPLETADA".equalsIgnoreCase(taskEntity.getEstado())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "No se puede cambiar el estado de una tarea que ya está COMPLETADA."
+            );
+        }
 
         taskEntity.setEstado(nuevoEstado);
 

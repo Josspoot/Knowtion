@@ -2,7 +2,6 @@ package com.mx.tecdesoftware.knowtion.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import com.mx.tecdesoftware.knowtion.models.Tag;
 import java.util.List;
 
 @Entity
@@ -35,14 +34,14 @@ public class TaskEntity {
     @JoinColumn(name = "asignado_a_id")
     private UserEntity asignadoA;
 
-    // ¡Aquí está la relación que nos faltaba agregar!
+    // Cambiamos a TagEntity para que se conecte correctamente con la base de datos
     @ManyToMany
     @JoinTable(
             name = "task_tags",
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Tag> etiquetas;
+    private List<TagEntity> etiquetas;
 
     public TaskEntity() {}
 
@@ -120,12 +119,12 @@ public class TaskEntity {
         this.asignadoA = asignadoA;
     }
 
-    // --- Nuevos Getters y Setters para las Etiquetas ---
-    public List<Tag> getEtiquetas() {
+    // --- Nuevos Getters y Setters actualizados para TagEntity ---
+    public List<TagEntity> getEtiquetas() {
         return etiquetas;
     }
 
-    public void setEtiquetas(List<Tag> etiquetas) {
+    public void setEtiquetas(List<TagEntity> etiquetas) {
         this.etiquetas = etiquetas;
     }
 }

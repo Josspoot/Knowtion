@@ -34,6 +34,10 @@ public class ProjectEntity {
     )
     private List<UserEntity> colaboradores;
 
+    // --- AQUÍ ESTÁ LA SOLUCIÓN: Relación con las tareas ---
+    @OneToMany(mappedBy = "proyecto")
+    private List<TaskEntity> tareas;
+
     public ProjectEntity() {
         this.fechaInicio = LocalDateTime.now();
     }
@@ -100,5 +104,14 @@ public class ProjectEntity {
 
     public void setColaboradores(List<UserEntity> colaboradores) {
         this.colaboradores = colaboradores;
+    }
+
+    // --- AQUÍ ESTÁN LOS MÉTODOS QUE ELIMINARÁN EL ERROR ROJO ---
+    public List<TaskEntity> getTareas() {
+        return tareas;
+    }
+
+    public void setTareas(List<TaskEntity> tareas) {
+        this.tareas = tareas;
     }
 }
