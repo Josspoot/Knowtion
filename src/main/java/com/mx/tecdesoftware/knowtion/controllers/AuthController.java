@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    // Anula el requisito global de token declarado en OpenApiConfig: este
+    // endpoint es público y debe mostrarse en Swagger con el candado ABIERTO.
+    @SecurityRequirements
     @Operation(
             summary = "Iniciar sesión",
             description = "Valida las credenciales del usuario y retorna un token JWT. " +

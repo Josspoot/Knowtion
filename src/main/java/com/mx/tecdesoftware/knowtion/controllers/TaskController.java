@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -49,7 +50,13 @@ public class TaskController {
             @ApiResponse(responseCode = "404", description = "Not Found: El proyecto o creador no existen", content = @Content),
             @ApiResponse(responseCode = "409", description = "Conflict: Ya existe una tarea con ese título en el proyecto", content = @Content)
     })
-    public Task crearTarea(@Valid @RequestBody Task task, @PathVariable Integer projectId, @PathVariable Integer creadorId) {
+    public Task crearTarea(@Valid @RequestBody Task task,
+
+                           @Parameter(description = "El ID del proyecto donde se guardará la tarea", example = "10000")
+                           @PathVariable Integer projectId,
+
+                           @Parameter(description = "El ID del usuario que está creando la tarea", example = "2")
+                               @PathVariable Integer creadorId) {
         return taskService.crearTarea(task, projectId, creadorId);
     }
 

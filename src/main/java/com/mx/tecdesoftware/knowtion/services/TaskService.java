@@ -8,8 +8,12 @@ import com.mx.tecdesoftware.knowtion.mappers.TaskMapper;
 import com.mx.tecdesoftware.knowtion.repositories.ProjectRepository;
 import com.mx.tecdesoftware.knowtion.repositories.TaskRepository;
 import com.mx.tecdesoftware.knowtion.repositories.UserRepository;
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -27,14 +31,15 @@ public class TaskService {
         this.taskMapper = taskMapper;
     }
 
+
     public Task crearTarea(Task task, Integer projectId, Integer creadorId) {
+
         ProjectEntity proyecto = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Proyecto no encontrado con ID: " + projectId));
 
         UserEntity creador = userRepository.findById(creadorId)
                 .orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND, "Creador no encontrado con ID: " + creadorId));
 
-        // VALIDACIÓN 1: Evitar tareas duplicadas en el mismo proyecto
         if (taskRepository.existsByTituloAndProyecto(task.getTitulo(), proyecto)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
