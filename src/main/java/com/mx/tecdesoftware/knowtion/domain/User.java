@@ -1,5 +1,6 @@
 package com.mx.tecdesoftware.knowtion.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -17,6 +18,9 @@ public class User {
 
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres por seguridad")
+    // WRITE_ONLY: Jackson la LEE del JSON al crear un usuario, pero nunca la
+    // ESCRIBE en las respuestas. Sin esto, GET /api/users expone los hashes.
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password; // Nombre diferente (sin "Hash") para el negocio
 
     private String rol;
